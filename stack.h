@@ -2,6 +2,7 @@
 
 #include <deque>
 #include <initializer_list>
+#include <exception>
 
 namespace my_stack {
 
@@ -34,12 +35,16 @@ public:
 
 	reference top()
 	{
-		c.back();
+		if (c.empty())
+			throw my_exception{};
+		return c.back();
 	}
 
 	const_reference top()const
 	{
-		c.back();
+		if (c.empty())
+			throw my_exception{};
+		return c.back();
 	}
 
 	bool empty()const
@@ -70,6 +75,8 @@ public:
 
 	void pop()
 	{
+		if (c.empty())
+			throw my_exception{};
 		c.pop_back();
 	}
 
@@ -95,7 +102,13 @@ public:
 
 	template<typename T, typename C>
 	friend bool operator>=(const stack<T, C>& x, const stack<T, C>& y);
-	
+
+private:
+	class my_exception : public std::exception {
+		const char* what()const noexcept {
+			return "There is a undefined behaviour!!!";
+		}
+	};
 protected:
 	C c;
 };
